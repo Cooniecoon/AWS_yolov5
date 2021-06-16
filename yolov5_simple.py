@@ -5,7 +5,6 @@ import numpy as np
 from numpy import random
 import socket
 from models.experimental import attempt_load
-from utils.plots import plot_one_box
 from utils.general import non_max_suppression
 
 import cv2
@@ -79,19 +78,25 @@ def calculate_area(bbox):
     return (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
 
 
-model_path = "./weights/behavior_s_0615.pt"
+model_path = "./weights/churo.pt"
 
 with open('AWS_IP.txt', 'r') as f:
     TCP_IP = f.readline()
-TCP_PORT = 6666
 
-# TCP소켓 열고 수신 대기
+TCP_PORT = 6666
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind((TCP_IP, TCP_PORT))
 s.listen(True)
 
+    
+TCP_PORT = 5555
+ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ss.bind((TCP_IP, TCP_PORT))
+ss.listen(True)
+
 print('listening...')
 cam_client, addr = s.accept()
+msg_client, addr = ss.accept()
 print("connected")
 
 
@@ -108,8 +113,11 @@ if __name__ == "__main__":
     while True:
         t = time.time()
         im0 = recv_img_from(cam_client)
+        h,w=im0.shape[:2]
+        # img_plot = letterbox(im0, new_shape=(640, 640))[0]
 
         img = preprocessing(im0)
+        h_,w_=640,640
 
         # Inference
         prediction = model(img)[0]
@@ -121,19 +129,33 @@ if __name__ == "__main__":
         for pred in prediction:
 
             if pred is not None:
-                x1 = int(pred[0])
-                y1 = int(pred[1])
-                x2 = int(pred[2])
-                y2 = int(pred[3])
+                x1 = min(1,max(0,float(pred[0]/w_)))
+                y1 = min(1,max(0,float(pred[1]/h_)))
+                x2 = min(1,max(0,float(pred[2]/w_)))
+                y2 = min(1,max(0,float(pred[3]/h_)))
                 cls = int(pred[-1])
                 bboxes.append([x1, y1, x2, y2, cls])
 
-                plot_one_box(
-                    [x1, y1, x2, y2],
-                    im0,
-                    color=colors[0],
-                    label=model.names[cls],
-                    line_thickness=3,
-                )
-        print(bboxes)
-        send_image_to(im0,cam_client,dsize=(480, 320))
+                # plot_one_box(
+                #     [x1, y1, x2, y2],
+                #     im0,
+                #     color=colors[0],
+                #     label=model.names[cls],
+                #     line_thickness=3,
+                # )
+        msgs=''
+        if len(bboxes) != 0:
+            for box in bboxes:
+                msg="{0:0.4f},{1:0.4f},{2:0.4f},{3:0.4f},{4}".format(box[0],box[1],box[2],box[3],box[4])
+                msgs=msgs+msg+'!'
+
+        # print("bboxes :",bboxes)
+        # print("msgs :",msgs)
+        # print("msgs length:",len(msgs))
+
+        # send_image_to(im0,cam_client,dsize=(480, 320))
+
+        send_msg_to(msgs,msg_client)
+
+        dt = time.time()-t
+        print("fps :{0:0.3f}".format(1/dt))
