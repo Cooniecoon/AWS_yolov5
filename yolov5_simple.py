@@ -141,4 +141,4 @@ if __name__ == "__main__":
         print(bboxes)
         print("=====================================================")
 
-        send_image_to(im0,cam_client,dsize=(640, 480))
+        # send_image_to(im0,cam_client,dsize=(640, 480))

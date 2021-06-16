@@ -30,10 +30,10 @@ while True:
     start = time.time()
     _,img=cam.read()
 
-    send_image_to(img,aws_server,dsize=(640, 480))
+    send_image_to(img,aws_server,dsize=(480, 320))
     cv2.imshow("Original", img)
 
-    img_recv=recv_img_from(aws_server)
+    # img_recv=recv_img_from(aws_server)
 
     dt = time.time() - start
     
