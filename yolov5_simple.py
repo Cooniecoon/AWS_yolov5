@@ -101,7 +101,7 @@ if __name__ == "__main__":
     model = model.autoshape()  # for autoshaping of PIL/cv2/np inputs and NMS
     model.half()
     names = model.module.names if hasattr(model, "module") else model.names
-    print(names)
+    print("classes : ",names)
     colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
 
@@ -111,7 +111,6 @@ if __name__ == "__main__":
 
         img = preprocessing(im0)
 
-        # print(img.shape,type(img))
         # Inference
         prediction = model(img)[0]
 
@@ -129,7 +128,6 @@ if __name__ == "__main__":
                 cls = int(pred[-1])
                 bboxes.append([x1, y1, x2, y2, cls])
 
-                # cv2.rectangle(im0_L, (x1_L,y1_L), (x2_L,y2_L), (0,0,255), 3, lineType=cv2.LINE_AA)
                 plot_one_box(
                     [x1, y1, x2, y2],
                     im0,
@@ -137,8 +135,5 @@ if __name__ == "__main__":
                     label=model.names[cls],
                     line_thickness=3,
                 )
-        print("=====================================================")
         print(bboxes)
-        print("=====================================================")
-
         # send_image_to(im0,cam_client,dsize=(640, 480))
