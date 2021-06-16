@@ -12,6 +12,7 @@ import cv2
 import sys
 import time
 
+from socket_funcs import *
 
 def letterbox(
     img,
