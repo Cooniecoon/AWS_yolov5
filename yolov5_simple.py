@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     while True:
         t = time.time()
-        _, im0 = recv_img_from(cam_client)
+        im0 = recv_img_from(cam_client)
 
         img = preprocessing(im0)
 
