@@ -2,12 +2,10 @@ import socket
 import numpy as np
 import time
 
-import os, sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from socket_funcs import *
 
 # 수신에 사용될 내 ip와 내 port번호
-with open('../AWS_IP.txt', 'r') as f:
+with open('AWS_IP.txt', 'r') as f:
     TCP_IP = f.readline()
 TCP_PORT = 6666
 

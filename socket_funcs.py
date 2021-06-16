@@ -5,7 +5,7 @@ import json
 
 
 def get_message_codes():
-    with open('./message_code.json', 'r') as f:
+    with open('message_code.json', 'r') as f:
         messages = json.load(f)
     return messages
 messages=get_message_codes()
@@ -53,10 +53,3 @@ def recv_check(sock):
         msg=sock.recv(1).decode()
         if msg==messages['roger']:
             break
-
-def a2b(a,b):
-    msg=a.recv(1)
-    if msg.decode()==messages['chatbot']:
-        b.send(msg)
-    else:
-        b.send(messages['pass'].encode())

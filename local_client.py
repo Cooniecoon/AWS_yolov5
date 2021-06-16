@@ -3,18 +3,16 @@ import cv2
 import numpy as np
 import time
 
-import os, sys
-sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
 from socket_funcs import *
 
-with open('../message_code.json', 'r') as f:
+with open('message_code.json', 'r') as f:
     messages = json.load(f)
 
 cam=cv2.VideoCapture(0)
 _,img=cam.read()
 
 # 연결할 서버(수신단)의 ip주소와 port번호
-with open('../AWS_IP.txt', 'r') as f:
+with open('AWS_IP.txt', 'r') as f:
     TCP_IP = f.readline()
 TCP_PORT = 6666
 
@@ -32,7 +30,7 @@ while True:
     img_recv=recv_img_from(aws_server)
 
     dt = time.time() - start
-
+    
     cv2.putText(img_recv, text="fps : {:.2f}".format(1 / dt), org=(30, 30), 
                         fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.7, 
                         color=(255, 255, 0), thickness=2)
