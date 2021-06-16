@@ -136,4 +136,4 @@ if __name__ == "__main__":
                     line_thickness=3,
                 )
         print(bboxes)
-        # send_image_to(im0,cam_client,dsize=(640, 480))
+        send_image_to(im0,cam_client,dsize=(480, 320))
