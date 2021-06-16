@@ -78,7 +78,20 @@ def calculate_area(bbox):
     return (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
 
 
-model_path = "cuPerson_v2.pt"  # cuPerson_2nd_epoch143
+model_path = "./weights/behavior_s_0615.pt"
+
+with open('AWS_IP.txt', 'r') as f:
+    TCP_IP = f.readline()
+TCP_PORT = 6666
+
+# TCP소켓 열고 수신 대기
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind((TCP_IP, TCP_PORT))
+s.listen(True)
+
+print('listening...')
+cam_client, addr = s.accept()
+print("connected")
 
 
 if __name__ == "__main__":
@@ -90,14 +103,10 @@ if __name__ == "__main__":
     print(names)
     colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
-    cap = cv2.VideoCapture(2)
-
-    cap.set(3, 640)
-    cap.set(4, 480)
 
     while True:
         t = time.time()
-        _, im0 = cap.read()
+        _, im0 = recv_img_from(cam_client)
 
         img = preprocessing(im0)
 
@@ -131,9 +140,4 @@ if __name__ == "__main__":
         print(bboxes)
         print("=====================================================")
 
-        cv2.imshow("l", im0)
-
-        if cv2.waitKey(10) == ord("c"):
-            cap.release()
-            cv2.destroyAllWindows()
-            break
+        send_image_to(im0,cam_client,dsize=(640, 480))
