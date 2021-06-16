@@ -5,7 +5,7 @@ import time
 
 from socket_funcs import *
 
-with open('message_code.json', 'r') as f:
+with open('../message_code.json', 'r') as f:
     messages = json.load(f)
 
 cam=cv2.VideoCapture(0)

@@ -5,7 +5,7 @@ import json
 
 
 def get_message_codes():
-    with open('message_code.json', 'r') as f:
+    with open('../message_code.json', 'r') as f:
         messages = json.load(f)
     return messages
 messages=get_message_codes()
