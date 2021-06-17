@@ -136,13 +136,8 @@ if __name__ == "__main__":
                 cls = int(pred[-1])
                 bboxes.append([x1, y1, x2, y2, cls])
 
-                # plot_one_box(
-                #     [x1, y1, x2, y2],
-                #     im0,
-                #     color=colors[0],
-                #     label=model.names[cls],
-                #     line_thickness=3,
-                # )
+
+
         msgs=''
         if len(bboxes) != 0:
             for box in bboxes:
