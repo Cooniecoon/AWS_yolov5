@@ -8,7 +8,6 @@ from models.experimental import attempt_load
 from utils.general import non_max_suppression
 
 import cv2
-import sys
 import time
 
 from socket_funcs import *
@@ -96,8 +95,10 @@ ss.listen(True)
 
 print('listening...')
 cam_client, addr = s.accept()
+print('image node connected')
 msg_client, addr = ss.accept()
-print("connected")
+print('message node connected')
+print("start")
 
 
 if __name__ == "__main__":
