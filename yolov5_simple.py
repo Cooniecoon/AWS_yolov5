@@ -3,14 +3,13 @@
 import torch
 import numpy as np
 from numpy import random
-import socket
+
 from models.experimental import attempt_load
 from utils.general import non_max_suppression
 
 import cv2
 import time
 
-from socket_funcs import *
 
 def letterbox(
     img,
@@ -66,39 +65,16 @@ def preprocessing(img):
     return img
 
 
-def bbox_center(bbox):
-    if len(bbox):
-        cx = bbox[0] + (bbox[2] - bbox[0]) // 2
-        cy = bbox[1] + (bbox[3] - bbox[1]) // 2
-        return [cx, cy]
+def crop_img(img,bbox):
+    x1,y1,x2,y2=bbox[0],bbox[1],bbox[2],bbox[3]
+    roi=img.copy()
+    roi=roi[y1:y2,x1:x2]
+    return roi
 
 
-def calculate_area(bbox):
-    return (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
+model_path = "breed_yolo.pt"
 
-
-model_path = "./weights/churo.pt"
-
-with open('AWS_IP.txt', 'r') as f:
-    TCP_IP = f.readline()
-
-TCP_PORT = 6666
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((TCP_IP, TCP_PORT))
-s.listen(True)
-
-    
-TCP_PORT = 5555
-ss = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-ss.bind((TCP_IP, TCP_PORT))
-ss.listen(True)
-
-print('listening...')
-cam_client, addr = s.accept()
-print('image node connected')
-msg_client, addr = ss.accept()
-print('message node connected')
-print("start")
+dataset_path="image/"
 
 
 if __name__ == "__main__":
@@ -110,12 +86,11 @@ if __name__ == "__main__":
     print("classes : ",names)
     colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
-
     while True:
-        t = time.time()
+
         im0 = recv_img_from(cam_client)
+
         h,w=im0.shape[:2]
-        # img_plot = letterbox(im0, new_shape=(640, 640))[0]
 
         img = preprocessing(im0)
         h_,w_=640,640
@@ -137,21 +112,6 @@ if __name__ == "__main__":
                 cls = int(pred[-1])
                 bboxes.append([x1, y1, x2, y2, cls])
 
-
-
-        msgs=''
-        if len(bboxes) != 0:
-            for box in bboxes:
-                msg="{0:0.4f},{1:0.4f},{2:0.4f},{3:0.4f},{4}".format(box[0],box[1],box[2],box[3],box[4])
-                msgs=msgs+msg+'!'
-
-        # print("bboxes :",bboxes)
-        # print("msgs :",msgs)
-        # print("msgs length:",len(msgs))
-
-        # send_image_to(im0,cam_client,dsize=(480, 320))
-
-        send_msg_to(msgs,msg_client)
 
         dt = time.time()-t
         print("fps :{0:0.3f}".format(1/dt))
