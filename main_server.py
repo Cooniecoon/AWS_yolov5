@@ -12,6 +12,7 @@ import sys
 import time
 
 from socket_funcs import *
+from models.DogLSTM import DogLSTM
 
 def letterbox(
     img,
@@ -85,12 +86,18 @@ print('message node connected')
 print("start")
 
 if __name__ == "__main__":
+    # YOLO
     model = attempt_load(model_path, map_location="cuda")
     model = model.autoshape()  # for autoshaping of PIL/cv2/np inputs and NMS
     model.half()
     names = model.module.names if hasattr(model, "module") else model.names
     print("classes : ",names)
     colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
+
+    # LSTM
+    behavior = DogLSTM().to(device)
+    behavior.load_state_dict(torch.load('DogLSTM.pt', map_location=device))
+
     while True:
         t = time.time()
         im0 = recv_img_from(cam_client)
@@ -110,13 +117,23 @@ if __name__ == "__main__":
                 x2 = min(1,max(0,float(pred[2]/w_)))
                 y2 = min(1,max(0,float(pred[3]/h_)))
                 cls = int(pred[-1])
-                bboxes.append([x1, y1, x2, y2, cls])
+                bbox=[x1, y1, x2, y2, cls]
+                bboxes.append(bbox)
+
+        #! bboxes -> sequence
+        if len(bboxes) == 20:
+            data = torch.Tensor([bboxes]).view(-1,1,5).to(device)
+            predited_label = behavior(data)
+            label = str(predited_label.argmax(1) + 1)
+
+        #TODO bboxes에 label 추가
 
         msgs=''
         if len(bboxes) != 0:
             for box in bboxes:
                 msg="{0:0.4f},{1:0.4f},{2:0.4f},{3:0.4f},{4}".format(box[0],box[1],box[2],box[3],box[4])
                 msgs=msgs+msg+'!'
+                
         # print("bboxes :",bboxes)
         # print("msgs :",msgs)
         # print("msgs length:",len(msgs))
