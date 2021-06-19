@@ -7,7 +7,7 @@ import pafy
 
 from socket_funcs import *
 
-url = "https://www.youtube.com/watch?v=0YRDWKWmnwc"
+url = "https://www.youtube.com/watch?v=4dPAqEoKOa0"
 video = pafy.new(url)
 best = video.getbest(preftype="mp4")
 
