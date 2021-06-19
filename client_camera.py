@@ -7,6 +7,9 @@ import random
 from socket_funcs import *
 
 cam=cv2.VideoCapture(0)
+cam.set(3,640)
+cam.set(4,480)
+cam.set(5,60)
 _,img=cam.read()
 
 
@@ -29,7 +32,7 @@ while True:
     _,img=cam.read()
     h,w=img.shape[:2]
 
-    send_image_to(img,img_server,dsize=(320, 320))
+    send_image_to(img,img_server,dsize=(640, 480))
     
 
     # img_recv=recv_img_from(img_server)
