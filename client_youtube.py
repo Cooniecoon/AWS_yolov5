@@ -7,7 +7,9 @@ import pafy
 
 from socket_funcs import *
 
-url = "https://www.youtube.com/watch?v=4dPAqEoKOa0"
+url = "https://www.youtube.com/watch?v=tHwH47gDnPw"
+# url = "https://www.youtube.com/watch?v=WlhoMO3tUvw"
+# url = "https://www.youtube.com/watch?v=do2ABAWG1JM"
 video = pafy.new(url)
 best = video.getbest(preftype="mp4")
 
@@ -30,6 +32,8 @@ msg_server.connect((TCP_IP, TCP_PORT))
 
 
 names=['jump', 'rest', 'run', 'sit', 'stand', 'walk']
+dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
+
 colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 while True:
     start = time.time()
@@ -49,12 +53,14 @@ while True:
 
     print(bboxes)
     for bbox in bboxes:
-        if bbox[-1] != "x":
+        if bbox[-2] != "x":
             x1 = float(bbox[0])*w
             y1 = float(bbox[1])*h
             x2 = float(bbox[2])*w
             y2 = float(bbox[3])*h
-            cls = int(bbox[-1])
+            cls = int(bbox[-2])
+            breed=int(bbox[-1])
+
             plot_one_box(
                 [x1,y1,x2,y2],
                 img,
@@ -62,6 +68,10 @@ while True:
                 label=names[cls],
                 line_thickness=3,
             )
+
+            cv2.putText(img, text="Breed : {}".format(dog_breeds[breed]), org=(30, 60), 
+                        fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.7, 
+                        color=(255, 255, 0), thickness=2)
 
     dt = time.time() - start
     

@@ -126,15 +126,58 @@ class ImageClassificationBase(nn.Module):
     def epoch_end(self, epoch, result):
         print("Epoch [{}] : train_loss: {:.4f}, val_loss: {:.4f}, val_acc: {:.4f}".format(epoch, result["train_loss"], result["val_loss"], result["val_acc"]))
 
-class DogBreedPretrainedResnet34(nn.Module):
+# class DogBreedPretrainedResnet34(nn.Module):
+#     def __init__(self):
+#         super().__init__()
+        
+#         self.resnet = models.resnet34(pretrained=False)
+#         self.last_layer = nn.Linear(512,256)
+#         torch.nn.init.xavier_uniform_(self.last_layer.weight)
+#         self.resnet.fc = nn.Sequential(self.last_layer,nn.ReLU())
+#         self.last_fc = nn.Linear(256,5)
+#     def forward(self, xb):
+#         out = self.resnet(xb)
+#         return self.last_fc(out)
+
+class ImageClassificationBase(nn.Module):
+    # training step
+    def training_step(self, batch):
+        img, targets = batch
+        out = self(img)
+        loss = F.nll_loss(out, targets)
+        return loss
+    
+    # validation step
+    def validation_step(self, batch):
+        img, targets = batch
+        out = self(img)
+        loss = F.nll_loss(out, targets)
+        acc = accuracy(out, targets)
+        return {'val_acc':acc.detach(), 'val_loss':loss.detach()}
+    
+    # validation epoch end
+    def validation_epoch_end(self, outputs):
+        batch_losses = [x['val_loss'] for x in outputs]
+        epoch_loss = torch.stack(batch_losses).mean()
+        batch_accs = [x['val_acc'] for x in outputs]
+        epoch_acc = torch.stack(batch_accs).mean()
+        return {'val_loss':epoch_loss.item(), 'val_acc':epoch_acc.item()}
+        
+    # print result end epoch
+    def epoch_end(self, epoch, result):
+        print("Epoch [{}] : train_loss: {:.4f}, val_loss: {:.4f}, val_acc: {:.4f}".format(epoch, result["train_loss"], result["val_loss"], result["val_acc"]))
+
+class DogBreedPretrainedResnet34(ImageClassificationBase):
     def __init__(self):
         super().__init__()
         
-        self.resnet = models.resnet34(pretrained=False)
-        self.last_layer = nn.Linear(512,256)
-        torch.nn.init.xavier_uniform_(self.last_layer.weight)
-        self.resnet.fc = nn.Sequential(self.last_layer,nn.ReLU())
-        self.last_fc = nn.Linear(256,5)
+        self.network = models.resnet34(pretrained=True)
+        # Replace last layer
+        num_ftrs = self.network.fc.in_features
+        self.network.fc = nn.Sequential(
+            nn.Linear(num_ftrs, 5),
+            nn.LogSoftmax(dim=1)
+        )
+        
     def forward(self, xb):
-        out = self.resnet(xb)
-        return self.last_fc(out)
+        return self.network(xb)

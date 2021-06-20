@@ -54,7 +54,7 @@ def send_msg_to(msgs,sock):
     if len(msgs) !=0:
         str_data = msgs.ljust(256).encode()
     else:
-        str_data='0.0000,0.0000,0.0000,0.0000,x!'.ljust(256).encode()
+        str_data='0.0000,0.0000,0.0000,0.0000,x,x!'.ljust(256).encode()
     sock.send(str_data)
     recv_check(sock)
 
