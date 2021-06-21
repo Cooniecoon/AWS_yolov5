@@ -7,9 +7,9 @@ import pafy
 
 from socket_funcs import *
 
-# url = "https://www.youtube.com/watch?v=tHwH47gDnPw"
+url = "https://www.youtube.com/watch?v=tHwH47gDnPw"
 # url = "https://www.youtube.com/watch?v=WlhoMO3tUvw"
-url = "https://www.youtube.com/watch?v=do2ABAWG1JM"
+# url = "https://www.youtube.com/watch?v=do2ABAWG1JM"
 video = pafy.new(url)
 best = video.getbest(preftype="mp4")
 
@@ -32,8 +32,8 @@ msg_server.connect((TCP_IP, TCP_PORT))
 
 
 names=['jump', 'rest', 'run', 'sit', 'stand', 'walk']
-dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
-
+# dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
+dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'golden_retriever']
 colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')

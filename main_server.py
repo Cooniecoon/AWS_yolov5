@@ -3,7 +3,7 @@ import torch
 import numpy as np
 from numpy import random
 import socket
-
+from PIL import Image
 from torch._C import device
 from torchvision import transforms
 
@@ -79,11 +79,12 @@ def to_device(data, device):
 
 def predict_breed(img,model):
     img = cv2.resize(img,(224,224),interpolation=cv2.INTER_LINEAR)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = Image.fromarray(img)
     trans=transforms.ToTensor()
     img=trans(img).to(dev)
     img = img.unsqueeze(0)
     pred = model(img)[0]
-    print(pred)
     _,predicted = torch.max(pred,dim=0)
     return predicted
 
@@ -129,7 +130,9 @@ if __name__ == "__main__":
 
     # Breed Classifier
     weights_fname = './weights/breedClassifier_0621_cropdata_4cls_res34.pt'
+    # breed_clf = DogBreedClassificationCNN()
     breed_clf = DogBreedPretrainedResnet34()
+    
     breed_clf.to(dev)
     breed_clf.load_state_dict(torch.load(weights_fname))
     breed_clf.eval()
