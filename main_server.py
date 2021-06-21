@@ -82,7 +82,8 @@ def predict_breed(img,model):
     trans=transforms.ToTensor()
     img=trans(img).to(dev)
     img = img.unsqueeze(0)
-    pred = model(img)[0]  
+    pred = model(img)[0]
+    print(pred)
     _,predicted = torch.max(pred,dim=0)
     return predicted
 
@@ -106,7 +107,8 @@ msg_client, addr = ss.accept()
 print('message node connected')
 print("start")
 
-dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
+# dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
+dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'golden_retriever']
 
 if __name__ == "__main__":
     # YOLO
@@ -126,7 +128,7 @@ if __name__ == "__main__":
     seqCollector = SequeceCollector(seq=15,min_dt=100)
 
     # Breed Classifier
-    weights_fname = './weights/breedClassifier_0621_cropdata_res34.pt'
+    weights_fname = './weights/breedClassifier_0621_cropdata_4cls_res34.pt'
     breed_clf = DogBreedPretrainedResnet34()
     breed_clf.to(dev)
     breed_clf.load_state_dict(torch.load(weights_fname))
@@ -163,6 +165,8 @@ if __name__ == "__main__":
                     bbox=[x1, y1, x2, y2, cls,(time.time() - start_time)*1000]
                     bboxes.append(bbox)
 
+            
+
             target = targetFinder.find(bboxes)
             seq_target = copy.deepcopy(target)
 
@@ -184,12 +188,12 @@ if __name__ == "__main__":
 
 
             if len(target):
-
-                margin=100
-                y1=min(0,int(float(target[1])*h)-margin)
-                y2=max(h,int(float(target[3])*h)+margin)
-                x1=min(0,int(float(target[1])*w)-margin)
-                x2=max(w,int(float(target[3])*w)+margin)
+                bbox=bboxes[0]
+                margin=20
+                y1=min(0,int(float(bbox[1])*h)-margin)
+                y2=max(h,int(float(bbox[3])*h)+margin)
+                x1=min(0,int(float(bbox[1])*w)-margin)
+                x2=max(w,int(float(bbox[3])*w)+margin)
                 img_roi=im0[y1:y2,x1:x2].copy()
                 breed = predict_breed(img_roi,breed_clf).cpu()
                 print('breed :',dog_breeds[breed])
