@@ -114,6 +114,7 @@ dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'golden_retriever']
 if __name__ == "__main__":
     # YOLO
     model_path = "./weights/06_20.pt"
+    print('Load YOLO model')
     model = attempt_load(model_path, map_location="cuda")
     model = model.autoshape()
     model.half()
@@ -123,6 +124,7 @@ if __name__ == "__main__":
 
     # Behavior LSTM
     dev = torch.device('cuda') if torch.cuda.is_available() else 'cpu'
+    print('Load LSTM model')
     behavior = DogLSTM().to(dev)
     behavior.load_state_dict(torch.load('./weights/DogLSTM.pt', map_location=dev))
     behavior.eval()
@@ -131,6 +133,7 @@ if __name__ == "__main__":
     # Breed Classifier
     weights_fname = './weights/breedClassifier_0621_cropdata_4cls_res34.pt'
     # breed_clf = DogBreedClassificationCNN()
+    print('Load Classifier model')
     breed_clf = DogBreedPretrainedResnet34()
     
     breed_clf.to(dev)
@@ -198,7 +201,7 @@ if __name__ == "__main__":
                 x1=min(0,int(float(bbox[1])*w)-margin)
                 x2=max(w,int(float(bbox[3])*w)+margin)
                 img_roi=im0[y1:y2,x1:x2].copy()
-                breed = predict_breed(img_roi,breed_clf).cpu()
+                breed = predict_breed(im0,breed_clf).cpu()
                 print('breed :',dog_breeds[breed])
 
             msgs =''
@@ -206,5 +209,6 @@ if __name__ == "__main__":
                 msgs="{0:0.4f},{1:0.4f},{2:0.4f},{3:0.4f},{4},{5}".format(target[0],target[1],target[2],target[3],target[4],breed)+'!'
 
             send_msg_to(msgs,msg_client)
-
+            breed = predict_breed(img_roi,breed_clf).cpu()
+            print('breed :',dog_breeds[breed])
             dt = time.time()-t

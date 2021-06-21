@@ -21,21 +21,27 @@ TCP_PORT = 6666
 img_server = socket.socket()
 img_server.connect((TCP_IP, TCP_PORT))
 
+
 TCP_PORT = 5555
 msg_server = socket.socket()
 msg_server.connect((TCP_IP, TCP_PORT))
 
+
 names=['jump', 'rest', 'run', 'sit', 'stand', 'walk']
+# dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
+dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'golden_retriever']
 colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
+
+fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+record = cv2.VideoWriter('output.avi', fourcc, 15.0, (640, 480))
+
+
 while True:
     start = time.time()
     _,img=cam.read()
     h,w=img.shape[:2]
 
-    send_image_to(img,img_server,dsize=(640, 480))
-    
-
-    # img_recv=recv_img_from(img_server)
+    send_image_to(img,img_server,dsize=(320, 320))
 
     msg_recv=recv_msg_from(msg_server)
     # print(msg_recv)
@@ -48,12 +54,14 @@ while True:
 
     print(bboxes)
     for bbox in bboxes:
-        if bbox[-1] != "x":
+        if bbox[-2] != "x":
             x1 = float(bbox[0])*w
             y1 = float(bbox[1])*h
             x2 = float(bbox[2])*w
             y2 = float(bbox[3])*h
-            cls = int(bbox[-1])
+            cls = int(bbox[-2])
+            breed=int(bbox[-1])
+
             plot_one_box(
                 [x1,y1,x2,y2],
                 img,
@@ -62,6 +70,10 @@ while True:
                 line_thickness=3,
             )
 
+            cv2.putText(img, text="Breed : {}".format(dog_breeds[breed]), org=(30, 60), 
+                        fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.7, 
+                        color=(255, 255, 0), thickness=2)
+
     dt = time.time() - start
     
     cv2.putText(img, text="fps : {:.2f}".format(1 / dt), org=(30, 30), 
@@ -69,7 +81,8 @@ while True:
                         color=(255, 255, 0), thickness=2)
 
     cv2.imshow("Original", img)
-    if cv2.waitKey(1) == 27:
+    record.write(img)
+    if cv2.waitKey(10) == 27:
         break
 cv2.destroyAllWindows()
 img_server.close()
