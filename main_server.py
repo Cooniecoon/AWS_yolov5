@@ -196,10 +196,10 @@ if __name__ == "__main__":
             if len(target):
                 bbox=bboxes[0]
                 margin=20
-                y1=min(0,int(float(bbox[1])*h)-margin)
-                y2=max(h,int(float(bbox[3])*h)+margin)
-                x1=min(0,int(float(bbox[1])*w)-margin)
-                x2=max(w,int(float(bbox[3])*w)+margin)
+                y1=max(0,int(float(bbox[1])*h)-margin)
+                y2=min(h,int(float(bbox[3])*h)+margin)
+                x1=max(0,int(float(bbox[1])*w)-margin)
+                x2=min(w,int(float(bbox[3])*w)+margin)
                 img_roi=im0[y1:y2,x1:x2].copy()
                 breed = predict_breed(im0,breed_clf).cpu()
                 print('breed :',dog_breeds[breed])
