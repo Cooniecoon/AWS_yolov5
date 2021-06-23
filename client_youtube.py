@@ -85,7 +85,11 @@ while True:
                         color=(255, 255, 0), thickness=2)
 
     cv2.imshow("Original", img)
-    record.write(img)
+    
+    im0 = recv_img_from(img_server)
+    cv2.imshow("CROP", im0)
+
+    # record.write(img)
     if cv2.waitKey(10) == 27:
         break
 cv2.destroyAllWindows()

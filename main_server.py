@@ -192,17 +192,19 @@ if __name__ == "__main__":
             else:
                 seq = seqCollector.get_sequece(seq_target)
 
-
+            img_roi = np.array([[[255,255,255]]], dtype=np.uint8)
             if len(target):
                 bbox=bboxes[0]
-                margin=20
+                margin=0
                 y1=max(0,int(float(bbox[1])*h)-margin)
                 y2=min(h,int(float(bbox[3])*h)+margin)
-                x1=max(0,int(float(bbox[1])*w)-margin)
-                x2=min(w,int(float(bbox[3])*w)+margin)
+                x1=max(0,int(float(bbox[0])*w)-margin)
+                x2=min(w,int(float(bbox[2])*w)+margin)
+                print(x1,y1,x2,y2,im0.shape)
                 img_roi=im0[y1:y2,x1:x2].copy()
                 breed = predict_breed(im0,breed_clf).cpu()
-                print('breed :',dog_breeds[breed])
+                # print('breed :',dog_breeds[breed])
+            
 
             msgs =''
             if len(target):
@@ -211,4 +213,5 @@ if __name__ == "__main__":
             send_msg_to(msgs,msg_client)
             breed = predict_breed(img_roi,breed_clf).cpu()
             print('breed :',dog_breeds[breed])
+            send_image_to(img_roi,cam_client,dsize=(320, 320))
             dt = time.time()-t
