@@ -55,8 +55,40 @@ def letterbox(
     ) 
     return img, ratio, (dw, dh)
 
+def image_padding(img):
+    ht, wd, cc= img.shape
+
+    ww = 640
+    hh = 640
+    if wd<=ww and ht<=hh:
+        color = (0,0,0)
+        result = np.full((hh,ww,cc), color, dtype=np.uint8)
+
+        xx = (ww - wd) // 2
+        yy = (hh - ht) // 2
+
+        result[yy:yy+ht, xx:xx+wd] = img
+        
+        # result[:,:xx]=cv2.flip(img[:,:xx], 1)
+        # result[:,xx+wd:]=cv2.flip(img[:,(wd-xx):], 1)
+
+        # result[:yy,:]=cv2.flip(img[:yy,:], 1)
+        # result[yy+ht:,:]=cv2.flip(img[(ht-yy):,:], 1)
+
+    elif wd>ww:
+        img=cv2.resize(img,(0,0),fx=ww/wd,fy=ww/wd,interpolation=cv2.INTER_LINEAR)
+        result=image_padding(img)
+
+    elif ht>hh:
+        img=cv2.resize(img,(0,0),fx=hh/ht,fy=hh/ht,interpolation=cv2.INTER_LINEAR)
+        result=image_padding(img)
+
+    return result
+
+
 def preprocessing(img):
-    img = letterbox(img, new_shape=(640, 640))[0]
+    # img = image_padding(img)
+    img = cv2.resize(img,(640,640),interpolation=cv2.INTER_LINEAR)
     # Convert
     img = img[:, :, ::-1].transpose(2, 0, 1)
     img = np.ascontiguousarray(img)
@@ -74,8 +106,6 @@ def to_device(data, device):
         return [to_device(d, device) for d in data]
     else:
         return data.to(device, non_blocking=True)
-
-
 
 def predict_breed(img,model):
     img = cv2.resize(img,(224,224),interpolation=cv2.INTER_LINEAR)
@@ -146,6 +176,7 @@ if __name__ == "__main__":
 
     targetFinder = TargetFinder()
 
+    img_roi = np.array([[[255,255,255]]], dtype=np.uint8)
 
     start_time = time.time()
     with torch.no_grad():
@@ -154,7 +185,6 @@ if __name__ == "__main__":
             im0 = recv_img_from(cam_client)
             h,w=im0.shape[:2]
             img = preprocessing(im0)
-            h_,w_=640,640
 
             # Inference
             prediction = model(img)[0]
@@ -163,15 +193,13 @@ if __name__ == "__main__":
             bboxes = []
             for pred in prediction:
                 if pred is not None:
-                    x1 = min(1,max(0,float(pred[0]/w_)))
-                    y1 = min(1,max(0,float(pred[1]/h_)))
-                    x2 = min(1,max(0,float(pred[2]/w_)))
-                    y2 = min(1,max(0,float(pred[3]/h_)))
+                    x1 = min(1,max(0,float(pred[0]/640)))
+                    y1 = min(1,max(0,float(pred[1]/640)))
+                    x2 = min(1,max(0,float(pred[2]/640)))
+                    y2 = min(1,max(0,float(pred[3]/640)))
                     cls = int(pred[-1])
                     bbox=[x1, y1, x2, y2, cls,(time.time() - start_time)*1000]
                     bboxes.append(bbox)
-
-            
 
             target = targetFinder.find(bboxes)
             seq_target = copy.deepcopy(target)
@@ -192,14 +220,14 @@ if __name__ == "__main__":
             else:
                 seq = seqCollector.get_sequece(seq_target)
 
-            img_roi = np.array([[[255,255,255]]], dtype=np.uint8)
+            
             if len(target):
                 bbox=bboxes[0]
-                margin=0
-                y1=max(0,int(float(bbox[1])*h)-margin)
-                y2=min(h,int(float(bbox[3])*h)+margin)
+                margin=10
                 x1=max(0,int(float(bbox[0])*w)-margin)
+                y1=max(0,int(float(bbox[1])*h)-margin)
                 x2=min(w,int(float(bbox[2])*w)+margin)
+                y2=min(h,int(float(bbox[3])*h)+margin)
                 print(x1,y1,x2,y2,im0.shape)
                 img_roi=im0[y1:y2,x1:x2].copy()
                 breed = predict_breed(im0,breed_clf).cpu()
@@ -212,6 +240,6 @@ if __name__ == "__main__":
 
             send_msg_to(msgs,msg_client)
             breed = predict_breed(img_roi,breed_clf).cpu()
-            print('breed :',dog_breeds[breed])
-            send_image_to(img_roi,cam_client,dsize=(320, 320))
+
+            send_image_to(img_roi,cam_client,dsize=(640, 480))
             dt = time.time()-t

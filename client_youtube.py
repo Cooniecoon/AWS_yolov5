@@ -7,13 +7,47 @@ import pafy
 
 from socket_funcs import *
 
+
+def image_padding(img):
+    ht, wd, cc= img.shape
+
+    ww = 640
+    hh = 640
+    if wd<=ww and ht<=hh:
+        color = (0,0,0)
+        result = np.full((hh,ww,cc), color, dtype=np.uint8)
+
+        xx = (ww - wd) // 2
+        yy = (hh - ht) // 2
+
+        result[yy:yy+ht, xx:xx+wd] = img
+        
+        # result[:,:xx]=cv2.flip(img[:,:xx], 1)
+        # result[:,xx+wd:]=cv2.flip(img[:,(wd-xx):], 1)
+
+        # result[:yy,:]=cv2.flip(img[:yy,:], 1)
+        # result[yy+ht:,:]=cv2.flip(img[(ht-yy):,:], 1)
+
+    elif wd>ww:
+        img=cv2.resize(img,(0,0),fx=ww/wd,fy=ww/wd,interpolation=cv2.INTER_LINEAR)
+        result=image_padding(img)
+
+    elif ht>hh:
+        img=cv2.resize(img,(0,0),fx=hh/ht,fy=hh/ht,interpolation=cv2.INTER_LINEAR)
+        result=image_padding(img)
+
+    return result
+
+
 url = "https://www.youtube.com/watch?v=tHwH47gDnPw"
 # url = "https://www.youtube.com/watch?v=WlhoMO3tUvw"
 # url = "https://www.youtube.com/watch?v=do2ABAWG1JM"
 video = pafy.new(url)
 best = video.getbest(preftype="mp4")
 
-cam = cv2.VideoCapture(best.url)
+# cam = cv2.VideoCapture(best.url)
+cam = cv2.VideoCapture('test.avi')
+cam.set(5,60)
 
 _,img=cam.read()
 
@@ -37,7 +71,7 @@ dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'golden_retriever']
 colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-record = cv2.VideoWriter('output.avi', fourcc, 15.0, (640, 480))
+record = cv2.VideoWriter('output.avi', fourcc, 30.0, (640, 480))
 
 
 while True:
@@ -45,7 +79,12 @@ while True:
     _,img=cam.read()
     h,w=img.shape[:2]
 
-    send_image_to(img,img_server,dsize=(320, 320))
+    img=img[:,:w//2].copy()
+    h,w=img.shape[:2]
+
+    img=np.ascontiguousarray(img)
+
+    send_image_to(img,img_server,dsize=(640, 480))
 
     msg_recv=recv_msg_from(msg_server)
     # print(msg_recv)
@@ -59,13 +98,12 @@ while True:
     print(bboxes)
     for bbox in bboxes:
         if bbox[-2] != "x":
-            x1 = float(bbox[0])*w
-            y1 = float(bbox[1])*h
-            x2 = float(bbox[2])*w
-            y2 = float(bbox[3])*h
+            x1 = int(float(bbox[0])*w)
+            y1 = int(float(bbox[1])*h)
+            x2 = int(float(bbox[2])*w)
+            y2 = int(float(bbox[3])*h)
             cls = int(bbox[-2])
             breed=int(bbox[-1])
-
             plot_one_box(
                 [x1,y1,x2,y2],
                 img,
