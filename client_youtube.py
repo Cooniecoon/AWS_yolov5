@@ -8,11 +8,11 @@ import pafy
 from socket_funcs import *
 
 
-def image_padding(img):
+def image_padding(img,dsize):
     ht, wd, cc= img.shape
 
-    ww = 640
-    hh = 640
+    ww = dsize[0]
+    hh = dsize[1]
     if wd<=ww and ht<=hh:
         color = (0,0,0)
         result = np.full((hh,ww,cc), color, dtype=np.uint8)
@@ -30,24 +30,25 @@ def image_padding(img):
 
     elif wd>ww:
         img=cv2.resize(img,(0,0),fx=ww/wd,fy=ww/wd,interpolation=cv2.INTER_LINEAR)
-        result=image_padding(img)
+        result=image_padding(img,dsize=(ww,hh))
 
     elif ht>hh:
         img=cv2.resize(img,(0,0),fx=hh/ht,fy=hh/ht,interpolation=cv2.INTER_LINEAR)
-        result=image_padding(img)
+        result=image_padding(img,dsize=(ww,hh))
 
     return result
 
 
-url = "https://www.youtube.com/watch?v=tHwH47gDnPw"
+# url = "https://www.youtube.com/watch?v=5iTTNRE-njM"
 # url = "https://www.youtube.com/watch?v=WlhoMO3tUvw"
 # url = "https://www.youtube.com/watch?v=do2ABAWG1JM"
+url = "https://www.youtube.com/watch?v=CMqROal8Usk&t=45s"
 video = pafy.new(url)
 best = video.getbest(preftype="mp4")
 
-# cam = cv2.VideoCapture(best.url)
-cam = cv2.VideoCapture('test.avi')
-cam.set(5,60)
+cam = cv2.VideoCapture(best.url)
+# cam = cv2.VideoCapture('test_video/test_2.avi')
+# cam.set(5,60)
 
 _,img=cam.read()
 
@@ -71,7 +72,7 @@ dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'golden_retriever']
 colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-record = cv2.VideoWriter('output.avi', fourcc, 30.0, (640, 480))
+record = cv2.VideoWriter('output_2.avi', fourcc, 30.0, (640, 480))
 
 
 while True:
@@ -79,8 +80,8 @@ while True:
     _,img=cam.read()
     h,w=img.shape[:2]
 
-    img=img[:,:w//2].copy()
-    h,w=img.shape[:2]
+    # img=img[:,:w//2].copy()
+    # h,w=img.shape[:2]
 
     img=np.ascontiguousarray(img)
 
@@ -124,10 +125,10 @@ while True:
 
     cv2.imshow("Original", img)
     
-    im0 = recv_img_from(img_server)
-    cv2.imshow("CROP", im0)
+    # im0 = recv_img_from(img_server)
+    # cv2.imshow("CROP", im0)
 
-    # record.write(img)
+    record.write(img)
     if cv2.waitKey(10) == 27:
         break
 cv2.destroyAllWindows()

@@ -55,11 +55,11 @@ def letterbox(
     ) 
     return img, ratio, (dw, dh)
 
-def image_padding(img):
+def image_padding(img,dsize):
     ht, wd, cc= img.shape
 
-    ww = 640
-    hh = 640
+    ww = dsize[0]
+    hh = dsize[1]
     if wd<=ww and ht<=hh:
         color = (0,0,0)
         result = np.full((hh,ww,cc), color, dtype=np.uint8)
@@ -77,11 +77,11 @@ def image_padding(img):
 
     elif wd>ww:
         img=cv2.resize(img,(0,0),fx=ww/wd,fy=ww/wd,interpolation=cv2.INTER_LINEAR)
-        result=image_padding(img)
+        result=image_padding(img,dsize=(ww,hh))
 
     elif ht>hh:
         img=cv2.resize(img,(0,0),fx=hh/ht,fy=hh/ht,interpolation=cv2.INTER_LINEAR)
-        result=image_padding(img)
+        result=image_padding(img,dsize=(ww,hh))
 
     return result
 
@@ -108,7 +108,8 @@ def to_device(data, device):
         return data.to(device, non_blocking=True)
 
 def predict_breed(img,model):
-    img = cv2.resize(img,(224,224),interpolation=cv2.INTER_LINEAR)
+    # img = cv2.resize(img,(224,224),interpolation=cv2.INTER_LINEAR)
+    img = image_padding(img,(224,224))
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = Image.fromarray(img)
     trans=transforms.ToTensor()
@@ -241,5 +242,5 @@ if __name__ == "__main__":
             send_msg_to(msgs,msg_client)
             breed = predict_breed(img_roi,breed_clf).cpu()
 
-            send_image_to(img_roi,cam_client,dsize=(640, 480))
+            # send_image_to(image_padding(img_roi,(128,128)),cam_client,dsize=(640, 480))
             dt = time.time()-t
