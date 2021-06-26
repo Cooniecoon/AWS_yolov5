@@ -126,19 +126,6 @@ class ImageClassificationBase(nn.Module):
     def epoch_end(self, epoch, result):
         print("Epoch [{}] : train_loss: {:.4f}, val_loss: {:.4f}, val_acc: {:.4f}".format(epoch, result["train_loss"], result["val_loss"], result["val_acc"]))
 
-# class DogBreedPretrainedResnet34(nn.Module):
-#     def __init__(self):
-#         super().__init__()
-        
-#         self.resnet = models.resnet34(pretrained=False)
-#         self.last_layer = nn.Linear(512,256)
-#         torch.nn.init.xavier_uniform_(self.last_layer.weight)
-#         self.resnet.fc = nn.Sequential(self.last_layer,nn.ReLU())
-#         self.last_fc = nn.Linear(256,5)
-#     def forward(self, xb):
-#         out = self.resnet(xb)
-#         return self.last_fc(out)
-
 class ImageClassificationBase(nn.Module):
     # training step
     def training_step(self, batch):
@@ -181,45 +168,6 @@ class DogBreedPretrainedResnet34(ImageClassificationBase):
         
     def forward(self, xb):
         return self.network(xb)
-
-
-class DogBreedClassificationCNN(ImageClassificationBase):
-    def __init__(self):
-        super().__init__()
-        
-        self.network = nn.Sequential(
-            nn.Conv2d(3, 32, 3, stride=1, padding=1),   # 224 * 244 * 32
-            nn.ReLU(),                                   
-            nn.Conv2d(32, 32, 3, stride=1, padding=1),       
-            nn.ReLU(),
-            nn.MaxPool2d(2, 2),                         # 112 * 112 * 32
-            
-            nn.Conv2d(32, 64, 3, stride=1, padding=1),   # 112 * 112* 64
-            nn.ReLU(), 
-            nn.Conv2d(64, 128, 3, stride=1, padding=1),    # 112 * 112* 128
-            nn.ReLU(),
-            nn.MaxPool2d(2,2),                          # 56 * 56* 128
-            
-            nn.Conv2d(128, 256, 3, stride=1, padding=1),   # 56*56*256
-            nn.ReLU(),
-            nn.Conv2d(256, 256, 3, stride=1, padding=1),  # 56*56*256
-            nn.ReLU(), 
-            nn.MaxPool2d(2,2),                        # 28*28*256
-            
-            nn.Conv2d(256, 256, 3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2,2),                            # 14*14*256
-            
-            nn.Conv2d(256, 256, 3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(2,2),                            # 7*7*256
-            
-            nn.Flatten(),
-            nn.Linear(7*7*256, 512),
-            nn.ReLU(),
-            nn.Linear(512, len(breeds)),
-            nn.LogSoftmax(dim = 1),
-        )
     
     def forward(self, xb):
         return self.network(xb)

@@ -163,7 +163,7 @@ if __name__ == "__main__":
 
     # Breed Classifier
     weights_fname = './weights/breedClassifier_0621_cropdata_4cls_res34.pt'
-    # breed_clf = DogBreedClassificationCNN()
+    
     print('Load Classifier model')
     breed_clf = DogBreedPretrainedResnet34()
     

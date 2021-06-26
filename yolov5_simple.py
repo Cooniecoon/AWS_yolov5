@@ -95,9 +95,10 @@ if __name__ == "__main__":
         t = time.time()
         im0 = recv_img_from(cam_client)
         h,w=im0.shape[:2]
-        # img_plot = letterbox(im0, new_shape=(640, 640))[0]
+        
         img = preprocessing(im0)
         h_,w_=640,640
+        
         # Inference
         prediction = model(img)[0]
         prediction = non_max_suppression(prediction)
