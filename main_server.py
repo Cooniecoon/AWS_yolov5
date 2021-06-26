@@ -139,8 +139,10 @@ msg_client, addr = ss.accept()
 print('message node connected')
 print("start")
 
-# dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
-dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'golden_retriever']
+dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
+# dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'golden_retriever']
+
+dog_size={'golden_retriever' : 'big', 'Welsh_corgi' : 'middle', 'Chihuahua' : 'small', 'Pomeranian' : 'small', 'etc' : 'None'}
 
 if __name__ == "__main__":
     # YOLO
