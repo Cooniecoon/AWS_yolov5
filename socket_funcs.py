@@ -71,8 +71,7 @@ def recv_check(sock):
         msg=sock.recv(1).decode()
         if msg==messages['roger']:
             break
-
-
+            
 
 ## image plot ##
 def plot_one_box(x, im, color=(128, 128, 128), label=None, line_thickness=3):
