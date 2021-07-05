@@ -122,6 +122,20 @@ def predict_breed(img,model):
     _,predicted = torch.max(pred,dim=0)
     predicted=predicted.cpu()
 
+    '''
+    Chihuahua 17
+    
+    Pomeranian 53
+
+    Cardigan 15
+    Pembroke 52
+
+    Labrador_retriever 40
+    curly-coated_retriever 90
+    flat-coated_retriever 93
+    golden_retriever 95
+    '''
+
     # 'Welsh_corgi'
     if predicted == 52 or predicted == 17:
         return 2
