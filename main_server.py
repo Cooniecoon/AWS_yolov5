@@ -80,10 +80,13 @@ def predict_breed(img,model):
     img = Image.fromarray(img)
     trans=transforms.ToTensor()
     img=trans(img).to(dev)
+    # img /= 255.0 
     img = img.unsqueeze(0)
     pred = model(img)[0]
     _,predicted = torch.max(pred,dim=0)
-    predicted=predicted.cpu()
+    predicted=int(predicted.cpu())
+    print(predicted)
+    
 
     '''
     Chihuahua 17
@@ -98,7 +101,7 @@ def predict_breed(img,model):
     flat-coated_retriever 93
     golden_retriever 95
     '''
-
+    
     # 'Welsh_corgi'
     if predicted == 52 or predicted == 17:
         return 2
@@ -177,6 +180,7 @@ if __name__ == "__main__":
     targetFinder = TargetFinder()
 
     img_roi = np.array([[[255,255,255]]], dtype=np.uint8)
+    breed=0
 
     start_time = time.time()
     with torch.no_grad():
@@ -230,16 +234,16 @@ if __name__ == "__main__":
                 y2=min(h,int(float(bbox[3])*h)+margin)
                 print(x1,y1,x2,y2,im0.shape)
                 img_roi=im0[y1:y2,x1:x2].copy()
-                breed = predict_breed(im0,breed_clf)
-                # print('breed :',dog_breeds[breed])
+                breed = predict_breed(img_roi,breed_clf)
+                print('breed :',dog_breeds[breed])
             
-
+            # breed = predict_breed(img_roi,breed_clf)
             msgs =''
             if len(target):
                 msgs="{0:0.4f},{1:0.4f},{2:0.4f},{3:0.4f},{4},{5}".format(target[0],target[1],target[2],target[3],target[4],breed)+'!'
 
             send_msg_to(msgs,msg_client)
-            breed = predict_breed(img_roi,breed_clf)
+            
 
             # send_image_to(image_padding(img_roi,(128,128)),cam_client,dsize=(640, 480))
             dt = time.time()-t

@@ -162,7 +162,7 @@ class DogBreedPretrainedResnet34(ImageClassificationBase):
         # Replace last layer
         num_ftrs = self.network.fc.in_features
         self.network.fc = nn.Sequential(
-            nn.Linear(num_ftrs, 4),
+            nn.Linear(num_ftrs, 120),
             nn.LogSoftmax(dim=1)
         )
         

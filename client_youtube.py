@@ -39,10 +39,12 @@ def image_padding(img,dsize):
     return result
 
 
-# url = "https://www.youtube.com/watch?v=5iTTNRE-njM"
-# url = "https://www.youtube.com/watch?v=WlhoMO3tUvw"
-# url = "https://www.youtube.com/watch?v=do2ABAWG1JM"
-url = "https://www.youtube.com/watch?v=CMqROal8Usk&t=45s"
+# url = "https://www.youtube.com/watch?v=CMqROal8Usk&t=45s" # chihuahua
+# url = "https://www.youtube.com/watch?v=ihjjfV5pc98" # pomeranian
+# url = "https://www.youtube.com/watch?v=LYBKgDTng1w" # golden
+# url = "https://www.youtube.com/watch?v=a0alQnZsKX8"
+
+
 video = pafy.new(url)
 best = video.getbest(preftype="mp4")
 
@@ -68,7 +70,7 @@ msg_server.connect((TCP_IP, TCP_PORT))
 
 names=['jump', 'rest', 'run', 'sit', 'stand', 'walk']
 # dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
-dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'golden_retriever']
+dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
 colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
@@ -105,13 +107,22 @@ while True:
             y2 = int(float(bbox[3])*h)
             cls = int(bbox[-2])
             breed=int(bbox[-1])
-            plot_one_box(
-                [x1,y1,x2,y2],
-                img,
-                color=colors[0],
-                label=names[cls],
-                line_thickness=3,
-            )
+            if cls == 3 or cls ==4:
+                plot_one_box(
+                    [x1,y1,x2,y2],
+                    img,
+                    color=colors[0],
+                    label='stop',
+                    line_thickness=3,
+                )
+            else:
+                plot_one_box(
+                    [x1,y1,x2,y2],
+                    img,
+                    color=colors[0],
+                    label=names[cls],
+                    line_thickness=3,
+                )
 
             cv2.putText(img, text="Breed : {}".format(dog_breeds[breed]), org=(30, 60), 
                         fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.7, 
