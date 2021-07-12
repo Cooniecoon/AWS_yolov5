@@ -26,8 +26,11 @@ def click_and_crop(event, x, y, flags, param):
         
 
 
-dataset_path="./original5/Welsh_corgi/"
-save_path="./original5_crop/Welsh_corgi/"
+dataset_path="./data/chihuahua/"
+save_path="./data/crop/"
+
+name='chihuahua'
+
 # print(os.listdir(dataset_path))
 total=len(os.listdir(dataset_path))
 for n, img_path in enumerate(os.listdir(dataset_path)):
@@ -67,8 +70,8 @@ for n, img_path in enumerate(os.listdir(dataset_path)):
             if len(refPt) == 2:
                 roi = clone[max(0,refPt[0][1]) : min(h,refPt[1][1]), max(0,refPt[0][0]) : min(w,refPt[1][0])]
                 roi=cv2.resize(roi, (w_,h_), interpolation=cv2.INTER_LINEAR)
-                print(save_path+"croped_"+str(i)+img_path)
-                cv2.imwrite(save_path+"croped_"+str(i)+img_path, roi)
+                print(save_path+name+str(i)+img_path)
+                cv2.imwrite(save_path+name+str(i)+img_path, roi)
                 cv2.waitKey(10)
                 i+=1
                 break
@@ -77,8 +80,8 @@ for n, img_path in enumerate(os.listdir(dataset_path)):
             if len(refPt) == 2:
                 roi = clone[max(0,refPt[0][1]) : min(h,refPt[1][1]), max(0,refPt[0][0]) : min(w,refPt[1][0])]
                 roi=cv2.resize(roi, (w_,h_), interpolation=cv2.INTER_LINEAR)
-                cv2.imwrite(save_path+"croped_"+str(i)+img_path, roi)
-                print(save_path+"croped_"+str(i)+img_path, "saved\n")
+                cv2.imwrite(save_path+name+str(i)+img_path, roi)
+                print(save_path+name+str(i)+img_path, "saved\n")
                 cv2.waitKey(10)
                 image = clone.copy()
                 i+=1

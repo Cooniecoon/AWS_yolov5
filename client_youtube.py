@@ -54,7 +54,6 @@ cam = cv2.VideoCapture(best.url)
 
 _,img=cam.read()
 
-# 연결할 서버(수신단)의 ip주소와 port번호
 with open('AWS_IP.txt', 'r') as f:
     TCP_IP = f.readline()
 
@@ -74,7 +73,7 @@ dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
 colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-record = cv2.VideoWriter('output_2.avi', fourcc, 30.0, (640, 480))
+record = cv2.VideoWriter('./video/output.avi', fourcc, 30.0, (640, 480))
 
 
 while True:
