@@ -146,7 +146,7 @@ dog_size={'golden_retriever' : 'big', 'Welsh_corgi' : 'middle', 'Chihuahua' : 's
 
 if __name__ == "__main__":
     # YOLO
-    model_path = "./weights/06_20.pt"
+    model_path = "./weights/yolov5_behavior.pt"
     print('Load YOLO model')
     model = attempt_load(model_path, map_location="cuda")
     model = model.autoshape()
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     seqCollector = SequeceCollector(seq=15,min_dt=100)
 
     # Breed Classifier
-    weights_fname = './weights/breedClassifier_120cls_res34.pt'
+    weights_fname = './weights/breedClassifier_120cls_res34_2.pt'
     
     print('Load Classifier model')
     breed_clf = DogBreedPretrainedResnet34()
