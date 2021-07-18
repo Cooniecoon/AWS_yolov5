@@ -39,19 +39,21 @@ def image_padding(img,dsize):
     return result
 
 
-url = "https://www.youtube.com/watch?v=CMqROal8Usk&t=45s" # chihuahua
+# url = "https://www.youtube.com/watch?v=CMqROal8Usk&t=45s" # chihuahua
 # url = "https://www.youtube.com/watch?v=ihjjfV5pc98" # pomeranian
 # url = "https://www.youtube.com/watch?v=LYBKgDTng1w" # golden
 # url = "https://www.youtube.com/watch?v=a0alQnZsKX8" # welshi
 
+url = 'https://www.youtube.com/watch?v=QdZsjv5-hfo'
+# url = 'https://www.youtube.com/watch?v=akbVx5z0skc'
 
-# video = pafy.new(url)
-# best = video.getbest(preftype="mp4")
+video = pafy.new(url)
+best = video.getbest(preftype="mp4")
 
-# cam = cv2.VideoCapture(best.url)
+cam = cv2.VideoCapture(best.url)
 # print(cam.get(0),cam.get(1),cam.get(2),cam.get(5))
 # cam = cv2.VideoCapture('video/Pomeranian.mp4')
-cam = cv2.VideoCapture('video/welshi_corgi.mp4')
+# cam = cv2.VideoCapture('video/Chihuahua.mp4')
 # cam.set(5,30)
 
 _,img=cam.read()
@@ -74,11 +76,11 @@ dog_size={'golden_retriever' : 'big', 'Welsh_corgi' : 'middle', 'Chihuahua' : 's
 dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
 colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
-# fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
-record = cv2.VideoWriter('C:/Users/jeongseokoon/projects/AWS_yolov5/video/welshi_corgi.avi', fourcc, 30, (int(cam.get(3)), int(cam.get(4))))
-print(cam.get(3), cam.get(4))
-i=0
+
+# fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+# record = cv2.VideoWriter('C:/Users/jeongseokoon/projects/AWS_yolov5/video/result/Chihuahua.avi', fourcc, 30, (int(cam.get(3)), int(cam.get(4))))
+# print(cam.get(3), cam.get(4))
+i=1
 while True:
     start = time.time()
     _,img=cam.read()
@@ -148,7 +150,7 @@ while True:
     # im0 = recv_img_from(img_server)
     # cv2.imshow("CROP", im0)
 
-    record.write(img)
+    # record.write(img)
     i+=1
     if cv2.waitKey(33) == 27:
         break

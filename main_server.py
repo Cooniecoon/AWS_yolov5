@@ -164,7 +164,7 @@ if __name__ == "__main__":
     seqCollector = SequeceCollector(seq=15,min_dt=100)
 
     # Breed Classifier
-    weights_fname = './weights/breedClassifier_120cls_res34_3.pt'
+    weights_fname = './weights/breedClassifier_120cls_res34.pt'
     
     print('Load Classifier model')
     breed_clf = DogBreedPretrainedResnet34()
