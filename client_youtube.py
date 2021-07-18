@@ -45,12 +45,13 @@ url = "https://www.youtube.com/watch?v=CMqROal8Usk&t=45s" # chihuahua
 # url = "https://www.youtube.com/watch?v=a0alQnZsKX8" # welshi
 
 
-video = pafy.new(url)
-best = video.getbest(preftype="mp4")
+# video = pafy.new(url)
+# best = video.getbest(preftype="mp4")
 
-cam = cv2.VideoCapture(best.url)
-# cam = cv2.VideoCapture('test_video/pomeranian.avi')
-# cam.set(5,60)
+# cam = cv2.VideoCapture(best.url)
+# print(cam.get(0),cam.get(1),cam.get(2),cam.get(5))
+cam = cv2.VideoCapture('video/Pomeranian.mp4')
+cam.set(5,60)
 
 _,img=cam.read()
 
@@ -73,7 +74,7 @@ dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
 colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-record = cv2.VideoWriter('./video/pomeranian.avi', fourcc, 30.0, (640, 480))
+record = cv2.VideoWriter('Pomeranian.avi', fourcc, cam.get(5), (640, 480))
 
 i=0
 while True:
@@ -106,10 +107,9 @@ while True:
             y2 = int(float(bbox[3])*h)
             cls = int(bbox[-2])
             breed=int(bbox[-1])
-            if i%30==0:
-                cv2.imwrite(f'C:/Users/jeongseokoon/projects/roboi/dog_breed_classification/data/crop_images/Chihuahua/chihuahua_{i}.jpg',img[y1:y2,x1:x2])
-                i+=1
-                print('saved')
+            # if i%30==0:
+            #     cv2.imwrite(f'C:/Users/jeongseokoon/projects/roboi/dog_breed_classification/data/crop_images/Chihuahua/chihuahua_{i}.jpg',img[y1:y2,x1:x2])
+            #     print('saved')
             if cls == 3 or cls ==4:
                 plot_one_box(
                     [x1,y1,x2,y2],
@@ -143,8 +143,11 @@ while True:
     # cv2.imshow("CROP", im0)
 
     record.write(img)
-    if cv2.waitKey(10) == 27:
+    i+=1
+    if cv2.waitKey(33) == 27:
         break
+
+cam.release()
 cv2.destroyAllWindows()
 img_server.close()
 msg_server.close()
