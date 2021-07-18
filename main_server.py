@@ -103,7 +103,7 @@ def predict_breed(img,model):
     '''
     
     # 'Welsh_corgi'
-    if predicted == 52 or predicted == 17:
+    if predicted == 52 or predicted == 15:
         return 2
     # 'Chihuahua',
     elif predicted == 17:

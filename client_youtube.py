@@ -39,8 +39,8 @@ def image_padding(img,dsize):
     return result
 
 
-# url = "https://www.youtube.com/watch?v=CMqROal8Usk&t=45s" # chihuahua
-url = "https://www.youtube.com/watch?v=ihjjfV5pc98" # pomeranian
+url = "https://www.youtube.com/watch?v=CMqROal8Usk&t=45s" # chihuahua
+# url = "https://www.youtube.com/watch?v=ihjjfV5pc98" # pomeranian
 # url = "https://www.youtube.com/watch?v=LYBKgDTng1w" # golden
 # url = "https://www.youtube.com/watch?v=a0alQnZsKX8" # welshi
 
