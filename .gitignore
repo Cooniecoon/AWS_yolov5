@@ -1,3 +1,5 @@
 key
 video
 breed_classification/data
+weights/breedClassifier_120cls_res34.pt
+weights/breedClassifier_120cls_res34_2.pt

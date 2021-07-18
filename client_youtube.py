@@ -40,16 +40,16 @@ def image_padding(img,dsize):
 
 
 # url = "https://www.youtube.com/watch?v=CMqROal8Usk&t=45s" # chihuahua
-# url = "https://www.youtube.com/watch?v=ihjjfV5pc98" # pomeranian
+url = "https://www.youtube.com/watch?v=ihjjfV5pc98" # pomeranian
 # url = "https://www.youtube.com/watch?v=LYBKgDTng1w" # golden
-url = "https://www.youtube.com/watch?v=a0alQnZsKX8"
+# url = "https://www.youtube.com/watch?v=a0alQnZsKX8" # welshi
 
 
 video = pafy.new(url)
 best = video.getbest(preftype="mp4")
 
 cam = cv2.VideoCapture(best.url)
-# cam = cv2.VideoCapture('test_video/test_2.avi')
+# cam = cv2.VideoCapture('test_video/pomeranian.avi')
 # cam.set(5,60)
 
 _,img=cam.read()
@@ -73,7 +73,7 @@ dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
 colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-record = cv2.VideoWriter('./video/output.avi', fourcc, 30.0, (640, 480))
+record = cv2.VideoWriter('./video/pomeranian.avi', fourcc, 30.0, (640, 480))
 
 
 while True:
