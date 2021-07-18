@@ -50,8 +50,9 @@ url = "https://www.youtube.com/watch?v=CMqROal8Usk&t=45s" # chihuahua
 
 # cam = cv2.VideoCapture(best.url)
 # print(cam.get(0),cam.get(1),cam.get(2),cam.get(5))
-cam = cv2.VideoCapture('video/Pomeranian.mp4')
-cam.set(5,60)
+# cam = cv2.VideoCapture('video/Pomeranian.mp4')
+cam = cv2.VideoCapture('video/welshi_corgi.mp4')
+# cam.set(5,30)
 
 _,img=cam.read()
 
@@ -69,13 +70,14 @@ msg_server.connect((TCP_IP, TCP_PORT))
 
 
 names=['jump', 'rest', 'run', 'sit', 'stand', 'walk']
-# dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
+dog_size={'golden_retriever' : 'big', 'Welsh_corgi' : 'middle', 'Chihuahua' : 'small', 'Pomeranian' : 'small', 'etc' : 'None'}
 dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
 colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 
-fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-record = cv2.VideoWriter('Pomeranian.avi', fourcc, cam.get(5), (640, 480))
-
+# fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+fourcc = cv2.VideoWriter_fourcc('M','J','P','G')
+record = cv2.VideoWriter('C:/Users/jeongseokoon/projects/AWS_yolov5/video/welshi_corgi.avi', fourcc, 30, (int(cam.get(3)), int(cam.get(4))))
+print(cam.get(3), cam.get(4))
 i=0
 while True:
     start = time.time()
@@ -127,15 +129,19 @@ while True:
                     line_thickness=3,
                 )
 
-            cv2.putText(img, text="Breed : {}".format(dog_breeds[breed]), org=(30, 60), 
+            cv2.putText(img, text="Breed : {}".format(dog_breeds[breed]), org=(30, 30), 
+                        fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.7, 
+                        color=(255, 255, 0), thickness=2)
+            cv2.putText(img, text="size : {}".format(dog_size[dog_breeds[breed]]), org=(30, 60), 
                         fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.7, 
                         color=(255, 255, 0), thickness=2)
 
     dt = time.time() - start
     
-    cv2.putText(img, text="fps : {:.2f}".format(1 / dt), org=(30, 30), 
-                        fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.7, 
-                        color=(255, 255, 0), thickness=2)
+    
+    # cv2.putText(img, text="fps : {:.2f}".format(1 / dt), org=(30, 60), 
+    #                     fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=0.7, 
+    #                     color=(255, 255, 0), thickness=2)
 
     cv2.imshow("Original", img)
     
