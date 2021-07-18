@@ -75,7 +75,7 @@ colors = [[random.randint(0, 255) for _ in range(3)] for _ in range(len(names))]
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
 record = cv2.VideoWriter('./video/pomeranian.avi', fourcc, 30.0, (640, 480))
 
-
+i=0
 while True:
     start = time.time()
     _,img=cam.read()
@@ -106,6 +106,10 @@ while True:
             y2 = int(float(bbox[3])*h)
             cls = int(bbox[-2])
             breed=int(bbox[-1])
+            if i%30==0:
+                cv2.imwrite(f'C:/Users/jeongseokoon/projects/roboi/dog_breed_classification/data/crop_images/Chihuahua/chihuahua_{i}.jpg',img[y1:y2,x1:x2])
+                i+=1
+                print('saved')
             if cls == 3 or cls ==4:
                 plot_one_box(
                     [x1,y1,x2,y2],
