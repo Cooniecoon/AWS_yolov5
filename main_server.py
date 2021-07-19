@@ -139,7 +139,6 @@ print('message node connected')
 print("start")
 
 dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'etc', 'golden_retriever']
-# dog_breeds=['Chihuahua', 'Pomeranian', 'Welsh_corgi', 'golden_retriever']
 
 dog_size={'golden_retriever' : 'big', 'Welsh_corgi' : 'middle', 'Chihuahua' : 'small', 'Pomeranian' : 'small', 'etc' : 'None'}
 
@@ -224,7 +223,6 @@ if __name__ == "__main__":
             else:
                 seq = seqCollector.get_sequece(seq_target)
 
-            
             if len(target):
                 bbox=bboxes[0]
                 margin=10
@@ -236,14 +234,11 @@ if __name__ == "__main__":
                 img_roi=im0[y1:y2,x1:x2].copy()
                 breed = predict_breed(img_roi,breed_clf)
                 print('breed :',dog_breeds[breed])
-            
-            # breed = predict_breed(img_roi,breed_clf)
+
             msgs =''
             if len(target):
                 msgs="{0:0.4f},{1:0.4f},{2:0.4f},{3:0.4f},{4},{5}".format(target[0],target[1],target[2],target[3],target[4],breed)+'!'
 
             send_msg_to(msgs,msg_client)
             
-
-            # send_image_to(image_padding(img_roi,(128,128)),cam_client,dsize=(640, 480))
             dt = time.time()-t
